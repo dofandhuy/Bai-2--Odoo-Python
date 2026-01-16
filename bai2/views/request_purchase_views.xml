@@ -107,7 +107,14 @@
             action = records.action_approve()
         </field>
     </record>
-
+    <record id="action_purchase_request_cancel_wizard" model="ir.actions.act_window">
+        <field name="name">Hủy bỏa</field>
+        <field name="res_model">purchase.request.cancel.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_purchase_request"/>
+        <field name="binding_view_types">list</field>
+    </record>
     <menuitem id="menu_purchase_request_root"
               name="Mua sắm nội bộ"
               sequence="10"/>

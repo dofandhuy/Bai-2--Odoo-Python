@@ -12,7 +12,7 @@
             'security/ir.model.access.csv',
             'data/ir_sequence_data.xml',
             'views/request_purchase_views.xml',
-            'views/cancel_reason_wizard_view.xml',
+            'wizard/cancel_reason_wizard_view.xml',
         ],
     'license': 'LGPL-3',
 }
