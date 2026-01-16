@@ -10,7 +10,6 @@
                 <field name="department_id" string="Phòng ban"/>
                 <field name="request_id" string="Người gửi"/>
                 <field name="date" string="Ngày gửi"/>
-                <field name="total_qty" sum="Tổng số lượng"/>
                 <field name="total_amount" sum="Tổng tiền" widget="monetary"/>
                 <field name="state" widget="badge" decoration-info="state == 'draft'"
                        decoration-warning="state == 'wait'" decoration-success="state == 'approved'"/>
@@ -25,7 +24,7 @@
                 <header>
                     <button name="action_confirm" string="Gửi duyệt" type="object"
                             class="oe_highlight"
-                            attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('is_requester', '=', False)]}"/>
+                            attrs="{'invisible': ['|','|', ('state', '!=', 'draft'), ('is_requester', '=', False),('request_line_ids', '=', [])]}"/>
                     <button name="action_return" string="Quay lại" type="object"
                             class="oe_highlight"
                             attrs="{'invisible': ['|', ('state', '!=', 'wait'), ('is_requester', '=', False)]}"/>
@@ -34,7 +33,8 @@
                     <button name="action_cancel" string="Hủy bỏ" type="object" states="wait"
                             class="oe_highlight" groups="purchase.group_purchase_manager"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="draft,wait,approved,cancel"/>
+                           statusbar_visible="draft,wait,approved"
+                           options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
                     <field name="is_requester" invisible="1"/>
@@ -58,7 +58,7 @@
                     </group>
                     <notebook>
                         <page string="Chi tiết sản phẩm">
-                            <field name="request_line_ids">
+                            <field name="request_line_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
                                 <tree editable="bottom">
                                     <field name="product_id"/>
                                     <field name="uom_id"/>
@@ -69,9 +69,8 @@
                                 </tree>
                             </field>
                             <group class="oe_subtotal_footer oe_right">
-                                <field name="total_qty"/>
                                 <field name="total_amount" widget="monetary"
-                                       class="oe_subtotal_footer_separator"/>
+                                       class="oe_subtotal_footer oe_right"/>
                             </group>
                         </page>
                         <page string="Mô tả">
@@ -95,6 +94,17 @@
             <p class="o_view_nocontent_smiling_face">
                 Tạo phiếu yêu cầu mua hàng đầu tiên của bạn!
             </p>
+        </field>
+    </record>
+    <record id="action_server_approve_purchase_requests" model="ir.actions.server">
+        <field name="name">Phê duyệt</field>
+        <field name="model_id" ref="model_purchase_request"/>
+        <field name="binding_model_id" ref="model_purchase_request"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="groups_id" eval="[(4, ref('purchase.group_purchase_manager'))]"/>
+        <field name="code">
+            action = records.action_approve()
         </field>
     </record>
 
