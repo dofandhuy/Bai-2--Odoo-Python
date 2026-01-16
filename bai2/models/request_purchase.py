@@ -6,16 +6,16 @@ class RequestPurchase(models.Model):
     name = fields.Char(string='Số phiếu', required=True, copy=False, 
                        readonly=True, default='Mới')
     
-    department_id= fields.Many2one('hr.department', String='Phòng ban', required= True, ondelete = 'restrict', help="Chọn phòng ban gửi yêu cầu mua hàng",  default=lambda self: self.env.user.employee_ids.department_id , readonly=True)
+    department_id= fields.Many2one('hr.department', string='Phòng ban', required= True, ondelete = 'restrict', help="Chọn phòng ban gửi yêu cầu mua hàng",  default=lambda self: self.env.user.employee_ids.department_id , readonly=True)
 
-    request_id= fields.Many2one('res.users', String='Người đặt', required= True, ondelete = 'restrict', default=lambda self: self.env.user, readonly=True)
+    request_id= fields.Many2one('res.users', string='Người đặt', required= True, ondelete = 'restrict', default=lambda self: self.env.user, readonly=True)
 
-    approver_id= fields.Many2one('res.users', String='Người duyệt', required=False, ondelete = 'restrict',readonly=True)
+    approver_id= fields.Many2one('res.users', sring='Người duyệt', required=False, ondelete = 'restrict',readonly=True)
 
-    date = fields.Date(String='Ngày đặt',readonly=True)
+    date = fields.Date(string="Ngày đặt",readonly=True)
 
     is_requester = fields.Boolean(compute='_compute_is_requester')
-    date_approve = fields.Datetime(String='Ngày chấp thuận',readonly=True)
+    date_approve = fields.Datetime(string="Ngày chấp thuận",readonly=True)
     description= fields.Text(string="Mô tả")
     cancel_reason=fields.Text(string="Lí do")
     state= fields.Selection([
@@ -42,10 +42,14 @@ class RequestPurchase(models.Model):
 
             
     def action_approve(self):
-        for rec in self:
-            rec.state = 'approved'
-            rec.date_approve= fields.Datetime.now()
-            rec.approver_id=  self.env.user.id
+        for record in self:
+            if record.state == 'wait':
+                # Thêm logic phê duyệt của bạn ở đây
+                record.write({
+                    'state': 'approved',
+                    'date_approve': fields.Datetime.now(),
+                    'approver_id': self.env.user.id
+                })
 
     def action_cancel(self):
 
